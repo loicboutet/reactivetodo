@@ -10,13 +10,12 @@ module Components
           TodoItem.all.each do |todo|
             div do
               todo.complete.span; todo.title.span
+              button { "complete" }.on(:click) { |evt| todo.complete = true; todo.save }
             end
           end
         end
       end
 
     end
-
   end
-
 end

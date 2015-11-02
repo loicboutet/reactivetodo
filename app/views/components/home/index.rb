@@ -6,8 +6,17 @@ module Components
       include React::Component
 
       def render
-        "hello there this is the home page test"
+        div do
+          TodoItem.all.each do |todo|
+            div do
+              todo.complete.span; todo.title.span
+            end
+          end
+        end
       end
+
     end
+
   end
+
 end

@@ -5,12 +5,54 @@
 
   <%= stylesheet_link_tag    "application", :media => "all" %>
   <%= csrf_meta_tags %>
-  
+
 </head>
 <body>
+  <section id="todoapp">
+      <header id="header">
+                  <%= yield %>
 
-  <%= yield %>
-  
+        <h1>todos</h1>
+        <input id="new-todo" placeholder="What needs to be done?" autofocus>
+      </header>
+      <section id="main" style="display: block;">
+        <input id="toggle-all" type="checkbox">
+        <label for="toggle-all">Mark all as complete</label>
+        <ul id="todo-list">
+          <li data-id="a42efa0e-c81c-41c4-ae03-60a846b5f6fa">
+            <div class="view">
+              <input class="toggle" type="checkbox">
+              <label>test</label>
+              <button class="destroy"></button>
+            </div>
+            <input class="edit" value="test">
+          </li>
+          <li class="completed" data-id="304982c2-5243-40b4-a0fb-0561f5cbb6c7">
+            <div class="view">
+              <input class="toggle" type="checkbox" checked="">
+              <label>test2</label>
+              <button class="destroy"></button>
+            </div>
+            <input class="edit" value="test2">
+          </li>
+        </ul>
+      </section>
+      <footer id="footer" style="display: block;">
+        <span id="todo-count"><strong>1</strong> item left</span>
+        <ul id="filters">
+          <li>
+            <a class="selected" href="#/all">All</a>
+          </li>
+          <li>
+            <a href="#/active">Active</a>
+          </li>
+          <li>
+            <a href="#/completed">Completed</a>
+          </li>
+        </ul>
+
+      </footer>
+  </section>
   <%= javascript_include_tag "application" unless params[:no_js] %>
 
 </body>

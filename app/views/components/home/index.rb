@@ -22,11 +22,13 @@ module Components
       end
 
       def render
-        div do
+        section(id: "main", style: {display: "block"}) do
           div { "There are #{filtered_todos.count} #{filter+' ' unless filter == :all} todo#{'s' if filtered_todos.count > 1}" }
-          filtered_todos.each do |todo|
-            Todo todo: todo
-          end
+            ul(id: "todo-list") do
+              filtered_todos.each do |todo|
+                Todo todo: todo
+              end
+            end
           button { "completed" }.on(:click) { filter! :completed }
           button { "uncompleted" }.on(:click) { filter! :uncompleted }
           button { "all" }.on(:click) { filter! :all }
@@ -41,12 +43,16 @@ module Components
       include React::Component
       required_param :todo, type: TodoItem
       def render
-        div do
-          input(type: :checkbox, (todo.complete ? :checked : :unchecked) => true).on(:click) do
-            todo.complete = !todo.complete
-            todo.save
+        li(class: (todo.complete ? "completed" : "")) do
+          div(class: "view")do
+            input(type: :checkbox, (todo.complete ? :checked : :unchecked) => true, :class => "toggle").on(:click) do
+              todo.complete = !todo.complete
+              todo.save
+            end
+            label do
+              todo.title
+            end
           end
-          todo.title.span
         end
       end
     end

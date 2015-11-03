@@ -15,6 +15,7 @@ module Components
             TodoItem.all.each { |todo| todo.complete }  # load the completed values of all todo items
           end.then do |todos|      # load returns the last expression when the promise resolves
             todos.each { |todo| todo.complete! }  # notify react of any changes
+            filter!
           end
         end
       end

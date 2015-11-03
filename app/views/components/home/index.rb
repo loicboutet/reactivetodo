@@ -18,7 +18,7 @@ module Components
           TodoItem.completed.all
         end.then do |items| # the last item loaded is returned from the promise
           items.each { |item| item.destroy }
-          filter! :all unless filter == :uncompleted
+          filter! filter == :uncompleted ? :uncompleted : :all
         end
       end
 
@@ -27,11 +27,10 @@ module Components
       end
 
       def add_new_todo
-        puts "adding a new todo"
         new_todo.save do
           new_todo! TodoItem.new
           TodoItem.all = nil;
-          filter! :all unless filter == :uncompleted
+          filter! filter == :uncompleted ? :uncompleted : :all
         end
       end
 
@@ -39,7 +38,7 @@ module Components
         div do
           div { "There are #{filtered_todos.count} #{filter+' ' unless filter == :all} todo#{'s' if filtered_todos.count > 1}" }
           filtered_todos.each do |todo|
-            Todo todo: todo
+            Todo todo: todo, ts: Time.now
           end
           button { "completed" }.on(:click) { filter! :completed }
           button { "uncompleted" }.on(:click) { filter! :uncompleted }
@@ -57,9 +56,11 @@ module Components
     class Todo
       include React::Component
       required_param :todo, type: TodoItem
+      required_param :ts
       def render
+        puts "rendering todo #{todo.id} #{todo.title} complete: #{todo.complete}"
         div do
-          input(type: :checkbox, (todo.complete ? :checked : :unchecked) => true).on(:click) do
+          input(id: "todo-#{todo.id}", type: :checkbox, (todo.complete ? :checked : :unchecked) => true).on(:click) do
             todo.complete = !todo.complete
             todo.save
           end

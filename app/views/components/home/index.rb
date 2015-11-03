@@ -6,6 +6,11 @@ module Components
       include React::Component
 
       define_state filter: :all
+      define_state :new_todo
+
+      before_mount do
+        new_todo! TodoItem.new
+      end
 
       def clear_completed
         TodoItem.completed = nil
@@ -21,6 +26,15 @@ module Components
         TodoItem.all.select { |todo| !(todo.destroyed? or (filter == :completed and !todo.complete) or (filter == :uncompleted and todo.complete))}
       end
 
+      def add_new_todo
+        puts "adding a new todo"
+        new_todo.save do
+          new_todo! TodoItem.new
+          TodoItem.all = nil;
+          filter! :all unless filter == :uncompleted
+        end
+      end
+
       def render
         section(id: "main", style: {display: "block"}) do
           div { "There are #{filtered_todos.count} #{filter+' ' unless filter == :all} todo#{'s' if filtered_todos.count > 1}" }
@@ -33,7 +47,10 @@ module Components
           button { "uncompleted" }.on(:click) { filter! :uncompleted }
           button { "all" }.on(:click) { filter! :all }
           button { "clear completed" }.on(:click) { clear_completed }
-          button { "create" }.on(:click) { TodoItem.new(title: "test").save { TodoItem.all = nil; filter! :all unless filter == :uncompleted } }
+          br
+          "enter a new todo".span
+          TextField record: new_todo, field_name: :title, on_enter: -> { add_new_todo }
+          button { "add" }.on(:click) { add_new_todo }
         end
       end
 

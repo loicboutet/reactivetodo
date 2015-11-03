@@ -12,6 +12,7 @@ module Components
             div do
               todo.complete.span; todo.title.span
               button { "complete" }.on(:click) { |evt| todo.complete = true; todo.save }
+              button { "destroy" }.on(:click) { |evt| todo.destroy; force_update! }
             end
           end
         end

@@ -1,8 +1,6 @@
 class ApplicationController < ActionController::Base
-  #protect_from_forgery
-  
-  def acting_user
-    cookies[:acting_user] and User.find_by_email(cookies[:acting_user])
-  end
-  
+  # Prevent CSRF attacks by raising an exception.
+  # For APIs, you may want to use :null_session instead.
+  #protect_from_forgery with: :exception
+
 end

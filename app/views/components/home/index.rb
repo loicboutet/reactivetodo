@@ -7,6 +7,7 @@ module Components
 
       def render
         div do
+          "bhhhfhdklfd".span
           TodoItem.all.each do |todo|
             div do
               todo.complete.span; todo.title.span

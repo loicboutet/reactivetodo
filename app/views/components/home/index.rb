@@ -41,7 +41,7 @@ module Components
             h1 do
               "Todo"
             end
-            TextField record: new_todo, field_name: :title, on_enter: -> { add_new_todo }, html_options: {id: "new-todo"}
+            TextField record: new_todo, field_name: :title, on_enter: -> { add_new_todo }, html_options: {id: "new-todo", placeholder: "What's left to do ? "}
           end
           section(id: "main", style: {display: "block"}) do
             ul(id: "todo-list") do

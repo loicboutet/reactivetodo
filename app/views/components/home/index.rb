@@ -5,33 +5,64 @@ module Components
 
       include React::Component
 
-      define_state :todos
+      define_state :current_mode
+      define_state :current_scope
 
       before_mount do
-        todos! TodoItem.all
+        set_scope(:all)
+      end
+
+      def set_scope(mode = current_mode)
+        if mode.is_a? Array
+          if mode.include? current_mode
+            mode = current_mode
+          else
+            mode = mode.first
+          end
+        end
+        TodoItem.send("#{mode}=", nil) # clear scope forcing a refetch from server
+        current_mode! mode
+        current_scope! TodoItem.send(mode)
+      end
+
+      def clear_completed
+        TodoItem.completed = nil
+        ReactiveRecord.load do # returns a promise that will resolve when all items have been loaded
+          TodoItem.completed.all
+        end.then do |items| # the last item loaded is returned from the promise
+          items.each { |item| item.destroy { set_scope :all }}
+        end
       end
 
       def render
         div do
-          todos.each do |todo|
-            if todo.id != nil
-              div do
-                todo.complete.span; todo.title.span
-                button { "complete" }.on(:click) { |evt| todo.complete = true; todo.save }
-                button { "destroy"  }.on(:click) { |evt| todo.destroy; todos! TodoItem.all; force_update! }
-              end
-            end
+          div { "There are #{current_scope.count} #{current_mode+' ' unless current_mode == :all} todo#{'s' if current_scope.count > 1}" }
+          current_scope.each do |todo|
+            Todo todo: todo, set_scope: -> {set_scope}
           end
-          todos.compact.count.span
-          button { "completed" }.on(:click) { |evt| todos! TodoItem.completed}
-          button { "uncompleted" }.on(:click) { |evt| todos! TodoItem.uncompleted}
-          button { "all" }.on(:click) { |evt| todos! TodoItem.all}
-          button { "clear completed" }.on(:click) { |evt| todos! TodoItem.clear_completed}
-          button { "create" }.on(:click) { |evt| TodoItem.new(title: "test").save; todos! TodoItem.all; force_update!}
-
+          button { "completed" }.on(:click) { set_scope :completed }
+          button { "uncompleted" }.on(:click) { set_scope :uncompleted }
+          button { "all" }.on(:click) { set_scope :all }
+          button { "clear completed" }.on(:click) { clear_completed }
+          button { "create" }.on(:click) { TodoItem.new(title: "test").save { set_scope([:all, :uncompleted]) } }
         end
       end
 
+    end
+
+    class Todo
+      include React::Component
+      required_param :todo, type: TodoItem
+      required_param :set_scope, type: Proc
+      def render
+        div do
+          input(type: :checkbox, (todo.complete ? :checked : :unchecked) => true).on(:click) do
+            todo.complete = !todo.complete
+            todo.save { set_scope }
+          end
+          todo.title.span
+        end
+      end
     end
   end
 end

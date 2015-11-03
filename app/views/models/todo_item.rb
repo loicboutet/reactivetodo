@@ -1,5 +1,7 @@
 class TodoItem < ActiveRecord::Base
 
+  belongs_to :user
+
   scope :completed, -> { where(complete: true)}
   scope :uncompleted, -> { where(complete: false)}
 

@@ -36,21 +36,31 @@ module Components
       end
 
       def render
-        section(id: "main", style: {display: "block"}) do
-          div { "There are #{filtered_todos.count} #{filter+' ' unless filter == :all} todo#{'s' if filtered_todos.count > 1}" }
+        section(id: "todoapp") do
+          header(id: "header") do
+            h1 do
+              "Todo"
+            end
+            TextField record: new_todo, field_name: :title, on_enter: -> { add_new_todo }, html_options: {id: "new-todo"}
+          end
+          section(id: "main", style: {display: "block"}) do
             ul(id: "todo-list") do
               filtered_todos.each do |todo|
                 Todo todo: todo
               end
             end
-          button { "completed" }.on(:click) { filter! :completed }
-          button { "uncompleted" }.on(:click) { filter! :uncompleted }
-          button { "all" }.on(:click) { filter! :all }
-          button { "clear completed" }.on(:click) { clear_completed }
-          br
-          "enter a new todo".span
-          TextField record: new_todo, field_name: :title, on_enter: -> { add_new_todo }
-          button { "add" }.on(:click) { add_new_todo }
+          end
+          footer(id: "footer", style: {display: "block"}) do
+            span(id: "todo-count") do
+              "#{filtered_todos.count} #{filter+' ' unless filter == :all} item#{'s' if filtered_todos.count > 1} left"
+            end
+            ul(id: "filters") do
+              li { a { "all" }.on(:click) { filter! :all }}
+              li { a { "Completed" }.on(:click) { filter! :completed }}
+              li { a { "Active" }.on(:click) { filter! :uncompleted }}
+            end
+            button(id: "clear-completed") { "clear completed" }.on(:click) { clear_completed }
+          end
         end
       end
 

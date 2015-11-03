@@ -10,6 +10,7 @@ module Components
     optional_param :on_change, type: Proc
     optional_param :clear_base_errors, default: true
     optional_param :on_enter, type: Proc
+    optional_param :html_options, default: {}
 
     backtrace :on
 
@@ -27,7 +28,7 @@ module Components
             [nib(value[0..3]), nib(value[4..7]), nib(value[8..11]), nib(value[12..15])]
           end.compact.join("-")
         end
-        input.form_control(
+        input(html_options).form_control(
           name: "#{record.class.to_s}[#{field_name}]",
           type: password ? 'password' : 'text',
           class: "#{'input-error' if record.errors[field_name]}",

@@ -18,15 +18,16 @@ module Components
               div do
                 todo.complete.span; todo.title.span
                 button { "complete" }.on(:click) { |evt| todo.complete = true; todo.save }
-                button { "destroy"  }.on(:click) { |evt| todo.destroy; force_update! }
+                button { "destroy"  }.on(:click) { |evt| todo.destroy; todos! TodoItem.all; force_update! }
               end
             end
           end
-          todos.count.span
+          todos.compact.count.span
           button { "completed" }.on(:click) { |evt| todos! TodoItem.completed}
           button { "uncompleted" }.on(:click) { |evt| todos! TodoItem.uncompleted}
           button { "all" }.on(:click) { |evt| todos! TodoItem.all}
           button { "clear completed" }.on(:click) { |evt| todos! TodoItem.clear_completed}
+          button { "create" }.on(:click) { |evt| TodoItem.new(title: "test").save; todos! TodoItem.all; force_update!}
 
         end
       end
